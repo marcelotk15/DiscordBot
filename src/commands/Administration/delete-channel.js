@@ -7,40 +7,43 @@ const { MessageCollector } = require("discord.js");
 class ChannelDelete extends Command {
     constructor(client) {
         super(client, {
-            name: "channelDelete",
+            name: "channel-delete",
             dirname: __dirname,
             enabled: true,
             guildOnly: true,
-            aliases: [],
+            aliases: [ "deletar-canal"],
             memberPermissions: [ "MANAGE_GUILD" ],
             botPermissions: [ "SEND_MESSAGES", "EMBED_LINKS" ],
             nsfw: false,
             ownerOnly: false,
             cooldown: 1000
         });
+
+        this.client = client;
     }
 
     async run(message, args, data) {
+        client = this.client;
 
-        if (args.join(" ") === "yes" || args.join(" ") === "y") {
+        if (args.join(" ") === client.strings.get("UTILS").YES.toLowerCase()) {
             return message.channel.delete();
         }
 
         let del = false;
 
-        let msg = await message.channel.send("Would you like to delete this channel? Answer `yes` or `no`!");
+        let msg = await message.channel.send(client.strings.get("DELETE_CHANEL_QUESTION"));
 
         const collector = new MessageCollector(message.channel, (m) => m.author.id === message.author.id, { time: 20000 });
 
         collector.on("collect", async (collected) => {
-            if(collected.content.toLowerCase() === 'no') {
+            if(collected.content.toLowerCase() === client.strings.get("UTILS").NO.toLowerCase()) {
                 message.delete();
                 collected.delete();
                 msg.delete();
                 collector.stop(true);
             }
 
-            if(collected.content.toLowerCase() === 'yes') {
+            if(collected.content.toLowerCase() === client.strings.get("UTILS").YES.toLowerCase()) {
                 message.channel.delete();
                 collector.stop(true);
             }
@@ -48,7 +51,13 @@ class ChannelDelete extends Command {
 
         collector.on("end", async (collected, reason) => {
             if (reason === "time") {
-                return message.channel.send("Time's up! Please retype the command!");
+                //Deleta as mensagens
+                msg.delete();
+                message.delete();
+                
+                return message.channel.send(client.strings.get("TIMES_UP")).then(msg => {
+                    msg.delete({ timeout: 15000 });
+                });
             }
         });
     }

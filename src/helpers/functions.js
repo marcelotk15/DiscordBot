@@ -40,5 +40,5 @@ module.exports = {
 
     getEmoji(emojiId, client) {
         return client.emojis.cache.get(emojiId);
-    }
+    },
 };

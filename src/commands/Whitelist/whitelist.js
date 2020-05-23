@@ -27,9 +27,11 @@ class Whitelist extends Command {
                 });
         }
 
-        let questions = require('./questions.json');
+        const questions = require('./questions.json');
 
-        // let answers = [];
+        let answers = [];
+
+        let error = false;
 
         message.delete();
 
@@ -71,6 +73,7 @@ class Whitelist extends Command {
                     response.first().delete(); // deleta resposta iniciar
 
                     let i = 1;
+                    const filterQ = m => m.author.id === message.author.id;
                     for (const question of questions) {
                         const questionEmbed = new MessageEmbed()
                             .setTitle('Moitas DayZ RP')
@@ -94,26 +97,57 @@ class Whitelist extends Command {
                         
                         channelMessage.edit(questionEmbed); //altera sempre a mesma msg embed
 
-                        await channel.awaitMessages((m) => (m.author.id === message.author.id), { max:1, time: 10000, erros: ["time"] }).then(response => {
-                            response.first().delete();
+                        await channel.awaitMessages(filterQ, { max:1, time: 10000, erros: ["time"] }).then(collected => {
+                            collected.first().delete();
+
+                            //salva a resposta na variavel
+                            answers.push(collected.first().content);
                         });
+
                     }
 
                 }).catch(() => {
-                    message.reply('O tepo acabou...').then( m => {
-                        m.delete({ timeout: 20000 });
-                    });
+                    message.channel.send(`${client.strings.get("WHITELIST_TIMES_UP", message.author.id)}`)
+                        .then( m => {
+                            m.delete({ timeout: 20000 });
+                        });
+
+                    error = !error;
 
                     return setTimeout(() => {
                         channel.delete();
                     }, 10000);
                 });
-                
-            // channel.send("```css\nWhitelist finalizada... a sala será apaagda```"); 
+            
+            //Se não teve erros acessa faz esses comandos para finalizar
+            if (!error) {
+                //TODO mudar isso e reaproveitar o embed
+                channelMessage.delete(); 
+                channel.send("```css\nWhitelist finalizada... a sala será apagada```");
 
-            // return setTimeout(() => {
-            //     channel.delete();
-            // }, 10000);
+                let whitelistEmbed = new MessageEmbed()
+                    .setAuthor(`Whitelist de ${message.author.username}`, client.config.logo)
+                    .setThumbnail(message.author.avatarURL)
+                    .setTimestamp()
+                    .setColor("#05c46b");
+                
+                let i = 0;
+                for (const question of questions) {
+                    whitelistEmbed.addField(
+                        question.question,
+                        `${(question.options) ? (answers[i] === question.correct) ? ':green_circle:' : ':red_circle:' : `\`${answers[i]}\``}`,
+                        true
+                    );
+                    
+                    i++;
+                }
+
+                message.guild.channels.cache.get(client.config.whitelist.channelAdm).send(whitelistEmbed);
+
+                return setTimeout(() => {
+                    channel.delete();
+                }, 15000);
+            }
         });
     }
 }

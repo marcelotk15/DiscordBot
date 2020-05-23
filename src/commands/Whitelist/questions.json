@@ -1,18 +1,21 @@
 [
     {
-        "question": "Qual seu nome?"
+        "question": "Qual seu nome? - Real"
     },
     {
-        "question": "Qual sua idade?"
+        "question": "Qual sua idade? - Real"
+    },
+    {
+        "question": "Nome do seu personagem?"
     },
     {
         "question": "O que é RP?",
         "options": [
-            "RollePlay",
+            "Rolle Play",
             "Pica de Mel",
             "Pipichu",
             "Aloca"
         ],
-        "correct": 0
+        "correct": "1"
     }
 ]

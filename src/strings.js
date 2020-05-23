@@ -7,7 +7,7 @@ module.exports = class {
         this.strings = {
 
             //Utils
-            PREFIX_INFO: (prefix) => `o prefixo do servidor é ${prefix}`,
+            PREFIX_INFO: (prefix) => `o prefixo do servidor é \`${prefix}\``,
             UTILS: {
                 YES: "Sim",
                 NO: "Não",
@@ -15,10 +15,13 @@ module.exports = class {
             VOTE_THANKS: (user) => `:arrow_up: Olá ${user.toString()}, obrigador por ter votado!`,
 
             //General
-            TIMES_UP: `${e.error} | O tempo para responder acabou, tente novamente.`,
+            TIMES_UP: `${e.warning} | O tempo para responder acabou, tente novamente.`,
 
             //Delete Chanel command
             DELETE_CHANEL_QUESTION: "Você tem certeza que deseja deletar esta sala? Responda com `sim` ou `não`!",
+
+            //Whitelist
+            WHITELIST_TIMES_UP: (user) => `${this.get("TIMES_UP")} \n<@${user}>, você falhou na whiteslit porque demorou a responder e falhou. \n\n *Você pode tentar novamnete.*`
         };
     }
 

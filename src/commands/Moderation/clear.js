@@ -20,7 +20,7 @@ class Clear extends Command {
         });
     }
 
-    async run (message, args, data) {
+    async run (message, args) {
         if (args[0] === 'all') {
             message.channel.send(`All messages of the channel will be deleted! To confirm type \`-confirm\``);
 
@@ -28,7 +28,7 @@ class Clear extends Command {
                 max: 1,
                 time: 20000,
                 errors: ["time"]
-            }).catch((err) => {
+            }).catch(() => {
                 // if the author of the commands does not confirm the backup loading
                 return message.channel.send(`Time's up! Please retype the command!`);
             });

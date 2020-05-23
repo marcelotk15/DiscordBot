@@ -1,5 +1,5 @@
 /*jshint esversion: 10 */
-const { bgBlue, bgMagenta, black, green } = require("chalk");
+const { bgBlue, black, green } = require("chalk");
 
 function dateTimePad(value, digits){
   let number = value;

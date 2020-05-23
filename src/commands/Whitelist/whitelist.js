@@ -1,7 +1,7 @@
 /*jshint esversion: 10 */
 const { Command } = require('../../base');
 
-const { MessageEmbed, Util } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 class Whitelist extends Command {
     constructor (client) {
@@ -15,7 +15,7 @@ class Whitelist extends Command {
         this.client = client;
     }
 
-    async run (message, args, data) {
+    async run (message) {
         const client = this.client;
 
         if (message.channel.id !== client.config.whitelist.channelId) {
@@ -29,7 +29,7 @@ class Whitelist extends Command {
 
         let questions = require('./questions.json');
 
-        let answers = [];
+        // let answers = [];
 
         message.delete();
 
@@ -99,7 +99,7 @@ class Whitelist extends Command {
                         });
                     }
 
-                }).catch((err) => {
+                }).catch(() => {
                     message.reply('O tepo acabou...').then( m => {
                         m.delete({ timeout: 20000 });
                     });

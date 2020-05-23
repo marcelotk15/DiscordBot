@@ -22,7 +22,7 @@ class Announcement extends Command {
         this.client = client;
     }
 
-    async run(message, args, data) {
+    async run(message, args) {
         const client = this.client;
 
         let text = args.join(" ");

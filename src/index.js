@@ -3,8 +3,8 @@ const path = require('path');
 
 const mongoose = require('mongoose');
 
-const {Moitas, Command, Events} = require('./base');
-client = new Moitas();
+const { Moitas } = require('./base');
+const client = new Moitas();
 
 
 let dirCommands = path.join(__dirname, './commands');

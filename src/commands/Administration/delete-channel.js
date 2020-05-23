@@ -22,14 +22,12 @@ class ChannelDelete extends Command {
         this.client = client;
     }
 
-    async run(message, args, data) {
-        client = this.client;
+    async run(message, args) {
+        const client = this.client;
 
         if (args.join(" ") === client.strings.get("UTILS").YES.toLowerCase()) {
             return message.channel.delete();
         }
-
-        let del = false;
 
         let msg = await message.channel.send(client.strings.get("DELETE_CHANEL_QUESTION"));
 

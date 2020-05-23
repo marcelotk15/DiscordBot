@@ -13,7 +13,7 @@ class Pepe extends Command {
         });
     }
 
-    async run (message, args, data) {
+    async run (message) {
         let pepes = [
             'https://cdn.discordapp.com/emojis/428556352915505165.png?v=1',
             'https://cdn.discordapp.com/emojis/428556326482739230.png?v=1',

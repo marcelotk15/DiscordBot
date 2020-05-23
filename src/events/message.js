@@ -1,7 +1,7 @@
 /*jshint esversion: 10 */
 const { Event } = require('../base');
 
-cmdCooldown = {};
+let cmdCooldown = {};
 
 class Message extends Event {
     constructor(client) {

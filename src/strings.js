@@ -29,7 +29,14 @@ module.exports = class {
             WHITELIST_QUESTION_N: (number) => `_Questão_ **${number}**`,
             WHITELIST_QUESTION: (question) => `> ***${question}***`,
             WHITELIST_QUESTION_TIME: (time) => `Você possui ${this.ms(time)} para responder.`,
-            WHITELIST_TIMES_UP: (user) => `${this.get("TIMES_UP")} \n<@${user}>, você falhou na whiteslit porque demorou a responder e falhou. \n\n *Você pode tentar novamnete.*`
+			WHITELIST_TIMES_UP: (user) => `${this.get("TIMES_UP")} \n<@${user}>, você falhou na whiteslit porque demorou a responder e falhou. \n\n *Você pode tentar novamnete.*`,
+			
+			//Announcement
+			ANNOUNCEMENT_ERROR_WT: "Você precisa digitar um texto que será anunciado!",
+			ANNOUNCEMENT_ERROR_1030: "Por favor digite um texto com até ou menos que 1030 caracteres!",
+			ANNOUNCEMENT_MENTION: () => `Você deseja adicionar uma menção na mensagem? Responda com: \`${this.get("UTILS").YES.toLowerCase()}\` ou \`${this.get("UTILS").NO.toLowerCase()}\`!`,
+			ANNOUNCEMENT_WHAT_MENTION: "DIgite uma das seguintes respostas: `every` (para uma menção @ everyone) or `here` (para uma menção @ here)!",
+			ANNOUNCEMENT_HEAD: "📢 ANÚNCIO :",
         };
     }
 

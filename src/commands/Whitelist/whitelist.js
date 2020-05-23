@@ -54,50 +54,50 @@ class Whitelist extends Command {
                 loading: `${client.emojis.cache.find(emoji => emoji.name === "loading")}`
             };
 
-            const firstMessage = new MessageEmbed()
-                .setTitle('Moitas DayZ RP')
-                .setDescription('**Seja bem-vindo ao nosso sistema de Whitelist!**')
+            const messageEmbed = new MessageEmbed()
+                .setTitle(client.strings.get("WHITELIST_TITLE"))
+                .setDescription(client.strings.get("WHITELIST_WELLCOME"))
                 .setThumbnail(client.config.whitelist.thumbnail)
                 .addFields(
-                    { name: '\u200B', value: 'Para iniciar as perguntas digite `iniciar`' },
-                    { name: '\u200B', value: `Você possui 1 minuto para responder cada pergunta. ${emojis.loading} \nSomente você e o Bot tem acesso a este canal.` },
-                    { name: '\u200B', value: '*Mesmo se falhar você poderá refazer a whitelist.*' }
+                    { name: '\u200B', value: client.strings.get("WHITELIST_START") },
+                    { name: '\u200B', value: client.strings.get("WHITELIST_MSG1") },
+                    { name: '\u200B', value: client.strings.get("WHITELIST_MSG2") }
                 )
                 .setFooter(client.config.embed.footer(client.config), client.config.logo)
                 .setColor(client.config.embed.color);
           
-            let channelMessage = await channel.send(firstMessage);
+            let channelMessage = await channel.send(messageEmbed);
+
+            let filter = m => (m.author.id === message.author.id) && (m.content === client.config.whitelist.startCommand);
           
-            await channel.awaitMessages((m) => (m.author.id === message.author.id) && (m.content === "iniciar"), { max: 1, time: 5000, errors: ["time"] })
-                .then(async response => {
-                    response.first().delete(); // deleta resposta iniciar
+            await channel.awaitMessages(filter, { max: 1, time: client.config.whitelist.startTime, errors: ["time"] })
+                .then(async collected => {
+
+                    collected.first().delete(); // deleta resposta iniciar
 
                     let i = 1;
-                    const filterQ = m => m.author.id === message.author.id;
+                    filter = m => m.author.id === message.author.id;
                     for (const question of questions) {
-                        const questionEmbed = new MessageEmbed()
-                            .setTitle('Moitas DayZ RP')
-                            .setDescription(`_Questão_ **${i++}**`)
-                            .setThumbnail(client.config.whitelist.thumbnail)
-                            .addFields(
-                                { name: '\u200B', value: `> ***${question.question}***` }
-                            )
-                            .setFooter(client.config.embed.footer(client.config), client.config.logo)
-                            .setColor(client.config.embed.color);
+                        //limpa os fields do embed
+                        messageEmbed.fields = [];
+
+                        messageEmbed.setDescription(client.strings.get("WHITELIST_QUESTION_N", i++))
+                            .addField('\u200B', client.strings.get("WHITELIST_QUESTION", question.question));
                         
                         let iQ = 1;
-                        if (question.options) { // se for uma pergunta com escolha
+                        if (question.options) { // se for uma pergunta com escolha lista as alternativas
                             for (const op of question.options) {
-                                questionEmbed.addField('\u200B', `${iQ++}: ${op}`);
+                                messageEmbed.addField('\u200B', `${iQ++}: ${op}`);
                             }
                         }
 
-                        questionEmbed.addField('\u200B', 'Você possui 1 minuto para responder. <:loading:713102638509719592>');
-                        questionEmbed.addField('\u200B', '*Mesmo se falhar você poderá refazer a whitelist.*');
+                        messageEmbed.addField('\u200B', question.time ? client.strings.get("WHITELIST_QUESTION_TIME", question.time) : client.strings.get("WHITELIST_QUESTION_TIME", 60000));
+                        messageEmbed.addField('\u200B', client.strings.get("WHITELIST_MSG2"));
                         
-                        channelMessage.edit(questionEmbed); //altera sempre a mesma msg embed
+                        channelMessage.edit(messageEmbed); //altera sempre a mesma msg embed
 
-                        await channel.awaitMessages(filterQ, { max:1, time: 10000, erros: ["time"] }).then(collected => {
+                        await channel.awaitMessages(m => (m.author.id === message.author.id), { max:1, time: 10000, erros: ["time"] })
+                        .then(collected => {
                             collected.first().delete();
 
                             //salva a resposta na variavel
@@ -106,11 +106,13 @@ class Whitelist extends Command {
 
                     }
 
-                }).catch(() => {
+                }).catch((err) => {
                     message.channel.send(`${client.strings.get("WHITELIST_TIMES_UP", message.author.id)}`)
                         .then( m => {
                             m.delete({ timeout: 20000 });
                         });
+
+                    client.logger.log(err, "error");
 
                     error = !error;
 
@@ -124,6 +126,13 @@ class Whitelist extends Command {
                 //TODO mudar isso e reaproveitar o embed
                 channelMessage.delete(); 
                 channel.send("```css\nWhitelist finalizada... a sala será apagada```");
+
+                let whitelist = new this.client.whitelists({
+                    author: { username: message.author.username, discriminator: message.author.discriminator, id: message.author.id },
+                    questions: questions,
+                    answers: answers
+                });
+                whitelist.save();
 
                 let whitelistEmbed = new MessageEmbed()
                     .setAuthor(`Whitelist de ${message.author.username}`, client.config.logo)

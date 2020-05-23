@@ -21,6 +21,14 @@ module.exports = class {
             DELETE_CHANEL_QUESTION: "Você tem certeza que deseja deletar esta sala? Responda com `sim` ou `não`!",
 
             //Whitelist
+            WHITELIST_TITLE: "Moitas DayZ RP",
+            WHITELIST_WELLCOME: "**Seja bem-vindo ao nosso sistema de Whitelist!**",
+            WHITELIST_START: `Para iniciar as perguntas digite: \`${c.whitelist.startCommand}\``,
+            WHITELIST_MSG1: `:bangbang: Você possui ${this.ms(c.whitelist.startTime)} para começar. \n\n:bangbang: Cada pergunta terá um tempo para resposta dependendo de sua complexidade. \n\n:bangbang: Somente você e o Bot tem acesso a este canal.`,
+            WHITELIST_MSG2: '*Mesmo se falhar você poderá refazer a whitelist.*',
+            WHITELIST_QUESTION_N: (number) => `_Questão_ **${number}**`,
+            WHITELIST_QUESTION: (question) => `> ***${question}***`,
+            WHITELIST_QUESTION_TIME: (time) => `Você possui ${this.ms(time)} para responder.`,
             WHITELIST_TIMES_UP: (user) => `${this.get("TIMES_UP")} \n<@${user}>, você falhou na whiteslit porque demorou a responder e falhou. \n\n *Você pode tentar novamnete.*`
         };
     }
@@ -33,5 +41,31 @@ module.exports = class {
 			case 'function': return value(...args);
 			default: return value;
 		}
+    }
+    
+    ms(milliseconds){
+		let roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
+		let days = roundTowardsZero(milliseconds / 86400000),
+		hours = roundTowardsZero(milliseconds / 3600000) % 24,
+		minutes = roundTowardsZero(milliseconds / 60000) % 60,
+		seconds = roundTowardsZero(milliseconds / 1000) % 60;
+		if(seconds === 0){
+			seconds++;
+		}
+		let isDays = days > 0,
+		isHours = hours > 0,
+		isMinutes = minutes > 0;
+		let pattern = 
+		(!isDays ? "" : (isMinutes || isHours) ? "{days} dias, " : "{days} dias e ")+
+		(!isHours ? "" : (isMinutes) ? "{hours} horas, " : "{hours} horas e ")+
+		(!isMinutes ? "" : "{minutes} minutos e ")+
+		("{seconds} segundos");
+		let sentence = pattern
+			.replace("{duration}", pattern)
+			.replace("{days}", days)
+			.replace("{hours}", hours)
+			.replace("{minutes}", minutes)
+			.replace("{seconds}", seconds);
+		return sentence;
 	}
 };

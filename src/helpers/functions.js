@@ -36,9 +36,5 @@ module.exports = {
         });
 
         return files;
-    },
-
-    getEmoji(emojiId, client) {
-        return client.emojis.cache.get(emojiId);
-    },
+    }
 };

@@ -14,6 +14,7 @@ class Moitas extends Client {
         this.aliases = new Collection();
         this.functions = require("../helpers/functions"); // Load the functions file
         this.logs = require("../base/Log"); // Log mongoose model
+        this.whitelists = require("../base/Whitelist"); // Whitelis mongoose model
         this.logger = require('../helpers/logger');
         this.strings = new(require('../strings'))();
     }

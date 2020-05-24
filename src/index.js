@@ -1,4 +1,4 @@
-/*jshint esversion: 10 */
+/*jshint esversion:10 */
 const path = require('path');
 
 const mongoose = require('mongoose');
@@ -16,7 +16,7 @@ client.login(client.config.token);
 
 // connect to mongoose database
 mongoose.connect(client.config.mongoDB, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-    client.logger.log("Connected to the Mongodb database.", "log");
+  client.logger.log('silly', 'Connected to the Mongodb database.');
 }).catch((err) => {
-    client.logger.log(`Unable to connect to the Mongodb database. Error: ${err}`, "error");
+  client.logger.log('warn', `Unable to connect to the Mongodb database. Error: ${err}`, 'error');
 });

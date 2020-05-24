@@ -5,101 +5,101 @@ const { MessageCollector, MessageEmbed } = require('discord.js');
 
 
 class Announcement extends Command {
-    constructor(client) {
-        super(client, {
-            name: "announcement",
-            dirname: __dirname,
-            enabled: true,
-            guildOnly: true,
-            aliases: [ "anuncio", "anc" ],
-            memberPermissions: [ "MENTION_EVERYONE" ],
-            botPermissions: [ "SEND_MESSAGES", "EMBED_LINKS" ],
-            nsfw: false,
-            ownerOnly: false,
-            cooldown: 3000
-        });
+  constructor(client) {
+    super(client, {
+      name: 'announcement',
+      dirname: __dirname,
+      enabled: true,
+      guildOnly: true,
+      aliases: [ 'anuncio', 'anc' ],
+      memberPermissions: [ 'MENTION_EVERYONE' ],
+      botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+      nsfw: false,
+      ownerOnly: false,
+      cooldown: 3000
+    });
 
-        this.client = client;
+    this.client = client;
+  }
+
+  async run(message, args) {
+    const client = this.client;
+
+    let text = args.join(' ');
+    if (!text) {
+      return message.channel.send(client.strings.get('ANNOUNCEMENT_ERROR_WT'))
+        .then((m) => {
+          m.delete({ timeout: 10000 });
+        });
     }
 
-    async run(message, args) {
-        const client = this.client;
+    if (text.lenght > 1030) {
+      return message.channel.send(client.strings.get('ANNOUNCEMENT_ERROR_1030'))
+        .then((m) => {
+          m.delete({ timeout: 10000 });
+        });
+    }
 
-        let text = args.join(" ");
-        if (!text) {
-            return message.channel.send(client.strings.get("ANNOUNCEMENT_ERROR_WT"))
-                .then((m) => {
-                    m.delete({ timeout: 10000 });
-                });
-        }
+    let mention = '';
 
-        if (text.lenght > 1030) {
-            return message.channel.send(client.strings.get("ANNOUNCEMENT_ERROR_1030"))
-                .then((m) => {
-                    m.delete({ timeout: 10000 });
-                });
-        }
+    let msg = await message.channel.send(client.strings.get('ANNOUNCEMENT_MENTION'));
 
-        let mention = "";
+    const collector = new MessageCollector(message.channel, (m) => m.author.id === message.author.id, { time: 240000 });
 
-        let msg = await message.channel.send(client.strings.get("ANNOUNCEMENT_MENTION"));
+    collector.on('collect', async (tmsg) => {
+      if(tmsg.content.toLowerCase() === client.strings.get('UTILS').NO.toLowerCase()) {
+        tmsg.delete();
+        msg.delete();
+        collector.stop(true);
+      }
 
-        const collector = new MessageCollector(message.channel, (m) => m.author.id === message.author.id, { time: 240000 });
+      if(tmsg.content.toLowerCase() === client.strings.get('UTILS').YES.toLowerCase()) {
+        tmsg.delete();
+        msg.delete();
 
-        collector.on("collect", async (tmsg) => {
-            if(tmsg.content.toLowerCase() === client.strings.get("UTILS").NO.toLowerCase()) {
-                tmsg.delete();
-                msg.delete();
-                collector.stop(true);
-            }
+        let tmsg1 = await message.channel.send(client.strings.get('ANNOUNCEMENT_WHAT_MENTION'));
 
-            if(tmsg.content.toLowerCase() === client.strings.get("UTILS").YES.toLowerCase()) {
-                tmsg.delete();
-                msg.delete();
+        let c = new MessageCollector(message.channel, (m) => m.author.id === message.author.id, { time: 60000 });
 
-                let tmsg1 = await message.channel.send(client.strings.get("ANNOUNCEMENT_WHAT_MENTION"));
-
-                let c = new MessageCollector(message.channel, (m) => m.author.id === message.author.id, { time: 60000 });
-
-                c.on("collect", (m) => {
-                    if(m.content.toLowerCase() === "here") {
-                        mention = "@here";
-                        tmsg1.delete();
-                        m.delete();
-                        collector.stop(true);
-                        c.stop(true);
-                    } else if(m.content.toLowerCase() === "every") {
-                        mention = "@everyone";
-                        tmsg1.delete();
-                        m.delete();
-                        collector.stop(true);
-                        c.stop(true);
-                    }
-                });
-
-                c.on("end", (collected, reason) => {
-                    if(reason === "time") {
-                        return message.channel.send(client.strings.get("TIMES_UP"));
-                    }
-                });
-            }
+        c.on('collect', (m) => {
+          if(m.content.toLowerCase() === 'here') {
+            mention = '@here';
+            tmsg1.delete();
+            m.delete();
+            collector.stop(true);
+            c.stop(true);
+          } else if(m.content.toLowerCase() === 'every') {
+            mention = '@everyone';
+            tmsg1.delete();
+            m.delete();
+            collector.stop(true);
+            c.stop(true);
+          }
         });
 
-        collector.on("end", (collected, reason) => {
-            if(reason === "time") {
-                return message.channel.send(client.strings.get("TIMES_UP"));
-            }
+        c.on('end', (collected, reason) => {
+          if(reason === 'time') {
+            return message.channel.send(client.strings.get('TIMES_UP'));
+          }
+        });
+      }
+    });
 
-            let embed = new MessageEmbed()
-                .setAuthor(client.strings.get("ANNOUNCEMENT_HEAD"))
-                .setColor(client.config.embed.color)
-                .setFooter(message.author.tag)
-                .setTimestamp()
-                .setDescription(text);
+    collector.on('end', (collected, reason) => {
+      if(reason === 'time') {
+        return message.channel.send(client.strings.get('TIMES_UP'));
+      }
+
+      let embed = new MessageEmbed()
+        .setAuthor(client.strings.get('ANNOUNCEMENT_HEAD'))
+        .setColor(client.config.embed.color)
+        .setFooter(message.author.tag)
+        .setTimestamp()
+        .setDescription(text);
             
-            message.channel.send(mention, embed);
-        });
-    }
+      message.channel.send(mention, embed);
+    });
+  }
 }
 
 module.exports = Announcement;

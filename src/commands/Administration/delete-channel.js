@@ -1,63 +1,63 @@
 /*jshint esversion: 10 */
 const { Command } = require('../../base');
 
-const { MessageCollector } = require("discord.js");
+const { MessageCollector } = require('discord.js');
 
 
 class ChannelDelete extends Command {
-    constructor(client) {
-        super(client, {
-            name: "channel-delete",
-            dirname: __dirname,
-            enabled: true,
-            guildOnly: true,
-            aliases: [ "deletar-canal"],
-            memberPermissions: [ "MANAGE_GUILD" ],
-            botPermissions: [ "SEND_MESSAGES", "EMBED_LINKS" ],
-            nsfw: false,
-            ownerOnly: false,
-            cooldown: 1000
-        });
+  constructor(client) {
+    super(client, {
+      name: 'channel-delete',
+      dirname: __dirname,
+      enabled: true,
+      guildOnly: true,
+      aliases: [ 'deletar-canal' ],
+      memberPermissions: [ 'MANAGE_GUILD' ],
+      botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+      nsfw: false,
+      ownerOnly: false,
+      cooldown: 1000
+    });
 
-        this.client = client;
+    this.client = client;
+  }
+
+  async run(message, args) {
+    const client = this.client;
+
+    if (args.join(' ') === client.strings.get('UTILS').YES.toLowerCase()) {
+      return message.channel.delete();
     }
 
-    async run(message, args) {
-        const client = this.client;
+    let msg = await message.channel.send(client.strings.get('DELETE_CHANEL_QUESTION'));
 
-        if (args.join(" ") === client.strings.get("UTILS").YES.toLowerCase()) {
-            return message.channel.delete();
-        }
+    const collector = new MessageCollector(message.channel, (m) => m.author.id === message.author.id, { time: 20000 });
 
-        let msg = await message.channel.send(client.strings.get("DELETE_CHANEL_QUESTION"));
+    collector.on('collect', async (collected) => {
+      if(collected.content.toLowerCase() === client.strings.get('UTILS').NO.toLowerCase()) {
+        message.delete();
+        collected.delete();
+        msg.delete();
+        collector.stop(true);
+      }
 
-        const collector = new MessageCollector(message.channel, (m) => m.author.id === message.author.id, { time: 20000 });
+      if(collected.content.toLowerCase() === client.strings.get('UTILS').YES.toLowerCase()) {
+        message.channel.delete();
+        collector.stop(true);
+      }
+    });
 
-        collector.on("collect", async (collected) => {
-            if(collected.content.toLowerCase() === client.strings.get("UTILS").NO.toLowerCase()) {
-                message.delete();
-                collected.delete();
-                msg.delete();
-                collector.stop(true);
-            }
-
-            if(collected.content.toLowerCase() === client.strings.get("UTILS").YES.toLowerCase()) {
-                message.channel.delete();
-                collector.stop(true);
-            }
-        });
-
-        collector.on("end", async (collected, reason) => {
-            if (reason === "time") {
-                //Deleta as mensagens
-                msg.delete();
-                message.delete();
+    collector.on('end', async (collected, reason) => {
+      if (reason === 'time') {
+        //Deleta as mensagens
+        msg.delete();
+        message.delete();
                 
-                return message.channel.send(client.strings.get("TIMES_UP")).then(msg => {
-                    msg.delete({ timeout: 15000 });
-                });
-            }
+        return message.channel.send(client.strings.get('TIMES_UP')).then(msg => {
+          msg.delete({ timeout: 15000 });
         });
-    }
+      }
+    });
+  }
 }
 module.exports = ChannelDelete;

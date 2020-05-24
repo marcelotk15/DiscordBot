@@ -5,7 +5,7 @@ class Command {
   constructor(
     client,
     {
-      name = null,
+      name,
       description = 'No description provided',
       usage = 'No usage provided',
       examples = 'No example provided',
@@ -20,7 +20,7 @@ class Command {
       cooldown = 3000,
     }
   ) {
-    let category = dirname ? dirname.split(path.sep)[parseInt(dirname.split(path.sep).length - 1, 10)] : 'Other';
+    let category = dirname ? dirname.split(path.sep)[Number.parseInt(dirname.split(path.sep).length - 1, 10)] : 'Other';
     this.client = client;
     this.conf = {
       enabled,

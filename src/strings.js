@@ -29,7 +29,8 @@ module.exports = class {
       WHITELIST_QUESTION_N: (number) => `_Questão_ **${number}**`,
       WHITELIST_QUESTION: (question) => `> ***${question}***`,
       WHITELIST_QUESTION_TIME: (time) => `Você possui ${this.ms(time)} para responder.`,
-      WHITELIST_TIMES_UP: (user) => `${this.get('TIMES_UP')} \n<@${user}>, você falhou na whiteslit porque demorou a responder e falhou. \n\n *Você pode tentar novamnete.*`,
+      WHITELIST_TIMES_UP_START: (user) => `${this.get('TIMES_UP')} \n<@${user}>, você demorou para iniciar as whitelist. \n\n *Você pode tentar novamente.*`,
+      WHITELIST_TIMES_UP: (user) => `${this.get('TIMES_UP')} \n<@${user}>, você falhou na whiteslit porque demorou a responder a questão e falhou. \n\n *Você pode tentar novamnete.*`,
 			
       //Announcement
       ANNOUNCEMENT_ERROR_WT: 'Você precisa digitar um texto que será anunciado!',

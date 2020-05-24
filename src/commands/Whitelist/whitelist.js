@@ -90,20 +90,35 @@ class Whitelist extends Command {
             messageEmbed.addField('\u200B', question.time ? client.strings.get('WHITELIST_QUESTION_TIME', question.time) : client.strings.get('WHITELIST_QUESTION_TIME', 60000));
             messageEmbed.addField('\u200B', client.strings.get('WHITELIST_MSG2'));
                         
-            channelMessage.edit(messageEmbed); //altera sempre a mesma msg embed
+            channelMessage.edit(messageEmbed); // altera sempre a mesma msg embed
 
-            await channel.awaitMessages(m => (m.author.id === message.author.id), { max:1, time: 10000, erros: ['time'] })
+            await channel.awaitMessages(m => (m.author.id === message.author.id), { max:1, time: question.time || 10000, erros: ['time'] }) // TODO: mudar tempo
               .then(collected => {
                 collected.first().delete();
 
-                //salva a resposta na variavel
-                answers.push(collected.first().content);
-              });
+                answers.push(collected.first().content); // salva a resposta na variavel
+              }).catch(err => {
+                message.channel.send(`${client.strings.get('WHITELIST_TIMES_UP', message.author.id)}`)
+                  .then( m => {
+                    m.delete({ timeout: 20000 });
+                  });
 
+                client.logger.log(err, 'error');
+
+                error = !error;
+
+                setTimeout(() => { channel.delete(); }, 10000);
+              });
+            
+            if (error) { // se falhou no tempo de qq questão a whitelist para
+              channelMessage.delete();
+
+              break;
+            }
           }
 
-        }).catch((err) => {
-          message.channel.send(`${client.strings.get('WHITELIST_TIMES_UP', message.author.id)}`)
+        }).catch(err => {
+          message.channel.send(`${client.strings.get('WHITELIST_TIMES_UP_START', message.author.id)}`)
             .then( m => {
               m.delete({ timeout: 20000 });
             });
@@ -112,49 +127,68 @@ class Whitelist extends Command {
 
           error = !error;
 
-          return setTimeout(() => {
-            channel.delete();
-          }, 10000);
+          setTimeout(() => { channel.delete(); }, 10000);
         });
             
-      //Se não teve erros acessa faz esses comandos para finalizar
-      if (!error) {
-        //TODO mudar isso e reaproveitar o embed
-        channelMessage.delete(); 
+      
+      if (!error) { // Se não teve erros acessa faz esses comandos para finalizar
+        
+        channelMessage.delete(); // TODO mudar isso e reaproveitar o embed
         channel.send('```css\nWhitelist finalizada... a sala será apagada```');
 
-        let whitelist = new this.client.whitelists({
-          author: { username: message.author.username, discriminator: message.author.discriminator, id: message.author.id },
-          questions: questions,
-          answers: answers
-        });
-        whitelist.save();
+        saveWhitelsit(message.author, questions, answers, client); // salva a whitelist na db
 
-        let whitelistEmbed = new MessageEmbed()
-          .setAuthor(`Whitelist de ${message.author.username}`, client.config.logo)
-          .setThumbnail(message.author.avatarURL)
-          .setTimestamp()
-          .setColor('#05c46b');
-                
-        let i = 0;
-        for (const question of questions) {
-          whitelistEmbed.addField(
-            question.question,
-            `${(question.options) ? (answers[i] === question.correct) ? ':green_circle:' : ':red_circle:' : `\`${answers[i]}\``}`,
-            true
-          );
-                    
-          i++;
-        }
+        const whitelistEmbed = enviarWhitelist(message.author, questions, answers, client); // montar embed
 
         message.guild.channels.cache.get(client.config.whitelist.channelAdm).send(whitelistEmbed);
 
-        return setTimeout(() => {
-          channel.delete();
-        }, 15000);
+        setTimeout(() => { return channel.delete(); }, 15000);
       }
     });
   }
 }
 
 module.exports = Whitelist;
+
+const saveWhitelsit = (author, questions, answers, client) => {
+  let whitelist = new client.whitelists({
+    author: { username: author.username, discriminator: author.discriminator, id: author.id },
+    questions: questions,
+    answers: answers
+  });
+
+  whitelist.save();
+
+  return;
+};
+
+const enviarWhitelist = (author, questions, answers, client) => {
+  console.log(author.avatarURL);
+  let whitelistEmbed = new MessageEmbed()
+    .setAuthor(`Whitelist de ${author.username}`, client.config.logo)
+    .setThumbnail(author.avatarURL())
+    .setTimestamp()
+    .setColor('#05c46b')
+    .addFields( 
+      { name: 'Usuário:',  value: `<@${author.id}>` },
+      { name: '\u200B', value: '> Resposats do Usuário' }
+    );
+                
+  let i = 0;
+  for (const question of questions) {
+    whitelistEmbed.addField(
+      question.question,
+      `${(question.options) ? (answers[i] === question.correct) ? ':green_circle:' : ':red_circle:' : `\`\`\`${answers[i++]}\`\`\``}`,
+      true
+    );
+  }
+
+  whitelistEmbed
+    .addFields(
+      { name: '\u200B', value: '\u200B' },
+      { name: '\u200B', value: '> Para aprovar ou reprovar:' },
+      { name: 'Confirme que o mesmo já está na whitelist antes de aprovar!', value: `\`\`\`php\n!aprovar <@${author.id}> \n!reprovar <@${author.id}> [motivo] //sem []\`\`\`` }
+    );
+
+  return whitelistEmbed;
+};

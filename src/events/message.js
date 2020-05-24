@@ -16,6 +16,29 @@ class Message extends Event {
     let client = this.client;
     const data = {};
 
+    //canais protegidos
+    if(
+      client.config.protectfChannels.includes(message.channel.id) && //canais
+      !message.content.includes(`${client.config.prefix}whitelist`) && !message.content.includes(`${client.config.prefix}wl`) && //whitelist command
+      !message.author.bot && //não é bot
+      !message.member.hasPermission('ADMINISTRATOR') /* admin */ ){
+
+      let alert;
+      
+      switch (message.channel.id) {
+      case client.config.whitelist.channelId:
+        alert = await message.channel.send('***Este canal não foi feito para bate papo, apenas para a whitelist!*** \nUse `!whitelits` para realizar a sua whitelist!');
+        break;
+      default:
+        alert = await message.channel.send('***Este canal não foi feito para bate papo!***');
+      }
+
+      message.delete({ timeout: 5000 });
+      alert.delete({ timeout: 15000 });
+
+      return false;
+    }
+
     // If the messagr author is a bot
     if (message.author.bot || !message.content.startsWith(client.config.prefix)) {
       return;

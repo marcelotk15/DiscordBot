@@ -17,6 +17,7 @@ class Moitas extends Client {
     this.whitelistsData = require('../base/Whitelist'); // Whitelis mongoose model
     this.logger = require('../logger');
     this.strings = new (require('../strings'))();
+    this.queue = new Map();
   }
 
   load(dirCommands, dirEvents) {

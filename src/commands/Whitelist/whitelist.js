@@ -25,20 +25,28 @@ class Whitelist extends Command {
   }
 
   async run (message) {
-    const client = this.client;
+    const config = this.client.config;
+    const strings = this.client.strings;
 
-    if (message.channel.id !== client.config.whitelist.channelId) return message.channel.send('Wrong place to do this!')
+    if (message.channel.id !== config.whitelist.channelId) return message.channel.send('Wrong place to do this!')
       .then(m => {
         m.delete({ timeout: 5000 });
 
         message.delete({ timeout: 2500 });
       });
 
-    const whiteliist = await this.client.findWhitelist(message.author);// procura a whitelist
+    if (message.member.roles.cache.has(config.whitelist.approvedRole))
+      return message.channel.send('Você já foi aprovado').then( m => {
+        m.delete({ timeout: 10000 });
+        message.delete({ timeout: 5000 });
+      });
 
+    const whiteliist = await this.client.findWhitelist(message.author);// procura a whitelist
     if (whiteliist) {
-      if (!whiteliist.moderated) return console.log('esperando');
-      return console.log('reprovado');
+      if (!whiteliist.moderated)
+        return message.channel.send('');
+
+      console.log('reprovado');
     }
 
     const questions = require('./questions.json');
@@ -53,7 +61,7 @@ class Whitelist extends Command {
       `wl-${message.author.discriminator}`, {
         type: 'text',
         topic: `Sala de Whitelista para ${message.author.username}`,
-        parent: client.config.whitelist.parrentId,
+        parent: config.whitelist.parrentId,
         permissionOverwrites: [{
           id: message.guild.id,
           deny: ['VIEW_CHANNEL']
@@ -65,22 +73,22 @@ class Whitelist extends Command {
     ).then(async (channel) => {
 
       const messageEmbed = new MessageEmbed()
-        .setTitle(client.strings.get('WHITELIST_TITLE'))
-        .setDescription(client.strings.get('WHITELIST_WELLCOME'))
-        .setThumbnail(client.config.whitelist.thumbnail)
+        .setTitle(strings.get('WHITELIST_TITLE'))
+        .setDescription(strings.get('WHITELIST_WELLCOME'))
+        .setThumbnail(config.whitelist.thumbnail)
         .addFields(
-          { name: '\u200B', value: client.strings.get('WHITELIST_START') },
-          { name: '\u200B', value: client.strings.get('WHITELIST_MSG1') },
-          { name: '\u200B', value: client.strings.get('WHITELIST_MSG2') }
+          { name: '\u200B', value: strings.get('WHITELIST_START') },
+          { name: '\u200B', value: strings.get('WHITELIST_MSG1') },
+          { name: '\u200B', value: strings.get('WHITELIST_MSG2') }
         )
-        .setFooter(client.config.embed.footer(client.config), client.config.logo)
-        .setColor(client.config.embed.color);
+        .setFooter(config.embed.footer(config), this.client.config.logo)
+        .setColor(this.client.config.embed.color);
           
       let channelMessage = await channel.send(messageEmbed);
 
-      let filter = m => (m.author.id === message.author.id) && (m.content === client.config.whitelist.startCommand);
+      let filter = m => (m.author.id === message.author.id) && (m.content === config.whitelist.startCommand);
           
-      await channel.awaitMessages(filter, { max: 1, time: client.config.whitelist.startTime, errors: ['time'] })
+      await channel.awaitMessages(filter, { max: 1, time: config.whitelist.startTime, errors: ['time'] })
         .then(async collected => {
 
           collected.first().delete(); // deleta resposta iniciar
@@ -91,8 +99,8 @@ class Whitelist extends Command {
             //limpa os fields do embed
             messageEmbed.fields = [];
 
-            messageEmbed.setDescription(client.strings.get('WHITELIST_QUESTION_N', i++))
-              .addField('\u200B', client.strings.get('WHITELIST_QUESTION', question.question));
+            messageEmbed.setDescription(strings.get('WHITELIST_QUESTION_N', i++))
+              .addField('\u200B', strings.get('WHITELIST_QUESTION', question.question));
                         
             let iQ = 1;
             if (question.options) { // se for uma pergunta com escolha lista as alternativas
@@ -101,23 +109,23 @@ class Whitelist extends Command {
               }
             }
 
-            messageEmbed.addField('\u200B', question.time ? client.strings.get('WHITELIST_QUESTION_TIME', question.time) : client.strings.get('WHITELIST_QUESTION_TIME', 60000));
-            messageEmbed.addField('\u200B', client.strings.get('WHITELIST_MSG2'));
+            messageEmbed.addField('\u200B', question.time ? strings.get('WHITELIST_QUESTION_TIME', question.time) : strings.get('WHITELIST_QUESTION_TIME', 60000));
+            messageEmbed.addField('\u200B', strings.get('WHITELIST_MSG2'));
                         
             channelMessage.edit(messageEmbed); // altera sempre a mesma msg embed
 
-            await channel.awaitMessages(m => (m.author.id === message.author.id), { max:1, time: question.time || 10000, erros: ['time'] }) // TODO: mudar tempo
+            await channel.awaitMessages(m => (m.author.id === message.author.id), { max:1, time: question.time || 10000, erros: ['time'] }) // TODO mudar tempo
               .then(collected => {
                 collected.first().delete();
 
                 answers.push(collected.first().content); // salva a resposta na variavel
               }).catch(err => {
-                message.channel.send(`${client.strings.get('WHITELIST_TIMES_UP', message.author.id)}`)
+                message.channel.send(`${strings.get('WHITELIST_TIMES_UP', message.author.id)}`)
                   .then( m => {
                     m.delete({ timeout: 20000 });
                   });
 
-                client.logger.log(err, 'error');
+                this.client.logger.log(err, 'error');
 
                 error = !error;
 
@@ -132,12 +140,12 @@ class Whitelist extends Command {
           }
 
         }).catch(err => {
-          message.channel.send(`${client.strings.get('WHITELIST_TIMES_UP_START', message.author.id)}`)
+          message.channel.send(`${strings.get('WHITELIST_TIMES_UP_START', message.author.id)}`)
             .then( m => {
               m.delete({ timeout: 20000 });
             });
 
-          client.logger.log(err, 'error');
+          this.client.logger.log(err, 'error');
 
           error = !error;
 
@@ -150,11 +158,11 @@ class Whitelist extends Command {
         channelMessage.delete(); // 
         channel.send('```css\nWhitelist finalizada... a sala será apagada```');
 
-        saveWhitelsit(message.author, questions, answers, client); // salva a whitelist na db
+        saveWhitelsit(message.author, questions, answers, this.client); // salva a whitelist na db
 
-        const whitelistEmbed = enviarWhitelist(message.author, questions, answers, client); // montar embed
+        const whitelistEmbed = enviarWhitelist(message.author, questions, answers, this.client); // montar embed
 
-        message.guild.channels.cache.get(client.config.whitelist.channelAdm).send(whitelistEmbed);
+        message.guild.channels.cache.get(config.whitelist.channelAdm).send(whitelistEmbed);
 
         setTimeout(() => { return channel.delete(); }, 15000);
       }

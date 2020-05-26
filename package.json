@@ -9,13 +9,18 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "@discordjs/opus": "^0.3.0",
+    "chalk": "^4.0.0",
     "common-tags": "^1.8.0",
     "discord.js": "^12.2.0",
+    "figlet": "^1.4.0",
+    "fluent-ffmpeg": "^2.1.2",
     "mongoose": "^5.9.15",
-    "nanoid": "^3.1.9",
+    "opusscript": "^0.0.7",
     "winston": "^3.2.1",
     "winston-console-format": "^1.0.5",
-    "winston-daily-rotate-file": "^4.4.2"
+    "winston-daily-rotate-file": "^4.4.2",
+    "ytdl-core": "^2.1.5"
   },
   "devDependencies": {
     "eslint": "^7.1.0",
@@ -24,8 +29,7 @@
   },
   "repository": "https://github.com/marcelotk15/DiscordBot.git",
   "private": true,
-
   "eslintConfig": {
-		"extends": "plugin:unicorn/recommended"
-	}
+    "extends": "plugin:unicorn/recommended"
+  }
 }

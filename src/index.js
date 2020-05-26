@@ -3,6 +3,15 @@ const path = require('path');
 
 const mongoose = require('mongoose');
 
+const figlet = require('figlet');
+const chalk = require('chalk');
+
+console.log(
+  chalk.yellow(
+    figlet.textSync('MoitasBot 0.1', {  horizontalLayout: 'fitted', verticalLayout: 'default' })
+  )
+);
+
 const { Moitas } = require('./base');
 const client = new Moitas();
 

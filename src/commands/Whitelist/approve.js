@@ -45,8 +45,6 @@ class Approve extends Command {
       message.delete({ timeout: 10000 });
     });
 
-    console.log(whiteliist);
-
     message.delete({ timeout: 10000 });
 
     let pvEmbed = new MessageEmbed()
@@ -64,6 +62,8 @@ class Approve extends Command {
         { name: '> Aprovaod por:', value: `<@${message.author.id}>`, inline: true }
       );
     message.channel.send(messageEmbed);
+     
+    member.roles.add(this.client.config.whitelist.approvedRole); // add role aprovado
   }
 }
 

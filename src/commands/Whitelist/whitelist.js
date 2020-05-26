@@ -7,9 +7,18 @@ class Whitelist extends Command {
   constructor (client) {
     super(client, {
       name: 'whitelist',
+      // description: 'No description provided',
+      // usage = 'No usage provided',
+      // examples = 'No example provided',
       dirname: __dirname,
+      enabled: true,
       guildOnly: true,
       aliases: [ 'wl' ],
+      botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+      memberPermissions: [],
+      nsfw: false,
+      ownerOnly: false,
+      cooldown: 3000,     
     });
 
     this.client = client;
@@ -18,13 +27,18 @@ class Whitelist extends Command {
   async run (message) {
     const client = this.client;
 
-    if (message.channel.id !== client.config.whitelist.channelId) {
-      return message.channel.send('Wrong place to do this!')
-        .then(m => {
-          m.delete({ timeout: 5000 });
+    if (message.channel.id !== client.config.whitelist.channelId) return message.channel.send('Wrong place to do this!')
+      .then(m => {
+        m.delete({ timeout: 5000 });
 
-          return message.delete({ timeout: 2500 });
-        });
+        message.delete({ timeout: 2500 });
+      });
+
+    const whiteliist = await this.client.findWhitelist(message.author);// procura a whitelist
+
+    if (whiteliist) {
+      if (!whiteliist.moderated) return console.log('esperando');
+      return console.log('reprovado');
     }
 
     const questions = require('./questions.json');
@@ -133,7 +147,7 @@ class Whitelist extends Command {
       
       if (!error) { // Se não teve erros acessa faz esses comandos para finalizar
         
-        channelMessage.delete(); // TODO mudar isso e reaproveitar o embed
+        channelMessage.delete(); // 
         channel.send('```css\nWhitelist finalizada... a sala será apagada```');
 
         saveWhitelsit(message.author, questions, answers, client); // salva a whitelist na db
@@ -151,7 +165,7 @@ class Whitelist extends Command {
 module.exports = Whitelist;
 
 const saveWhitelsit = (author, questions, answers, client) => {
-  let whitelist = new client.whitelists({
+  let whitelist = new client.whitelistsData({
     author: { username: author.username, discriminator: author.discriminator, id: author.id },
     questions: questions,
     answers: answers

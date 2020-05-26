@@ -14,7 +14,7 @@ class Moitas extends Client {
     this.aliases = new Collection();
     this.functions = require('../helpers/functions'); // Load the functions file
     this.logs = require('../base/Log'); // Log mongoose model
-    this.whitelists = require('../base/Whitelist'); // Whitelis mongoose model
+    this.whitelistsData = require('../base/Whitelist'); // Whitelis mongoose model
     this.logger = require('../logger');
     this.strings = new (require('../strings'))();
   }
@@ -89,6 +89,33 @@ class Moitas extends Client {
     this.events.set(event.conf.name, event);
 
     this.on(event.conf.name, (...args) => event.run(...args));
+  }
+
+  async resolveMember(search, guild){
+    let member = null;
+    if(!search || typeof search !== 'string') return;
+    // Try ID search
+    if(search.match(/^<@!?(\d+)>$/)){
+      let id = search.match(/^<@!?(\d+)>$/)[1];
+      member = await guild.members.fetch(id).catch(() => {});
+      if(member) return member;
+    }
+    // Try username search
+    if(search.match(/^!?(\w+)#(\d+)$/)){
+      guild = await guild.fetch();
+      member = guild.members.find((m) => m.user.tag === search);
+      if(member) return member;
+    }
+    member = await guild.members.fetch(search).catch(() => {});
+    return member;
+  }
+
+  async findWhitelist({ id: userID }) {
+    return new Promise(async (resolve) => {
+      let whitelistData = await this.whitelistsData.findOne({ 'author.id': userID }).sort({ _id: -1 });
+      
+      resolve(whitelistData || false);
+    });
   }
 }
 

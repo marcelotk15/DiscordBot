@@ -1,5 +1,5 @@
 /*jshint esversion: 10 */
-//TODO: REVER
+//TODO REVER
 const { Command } = require('../../base');
 
 class Clear extends Command {

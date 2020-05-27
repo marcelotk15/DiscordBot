@@ -35,18 +35,20 @@ module.exports = class {
       WHITELIST_TIMES_UP: (user) => `${this.get('TIMES_UP')} \n<@${user}>, você falhou na whiteslit porque demorou a responder! \n\n *Você pode tentar novamnete.*`,
       WHITELIST_ALREADY_APPROVED: 'você já está aprovado em nossa whitelist',
       WHITELIST_SUCCESS: (user) => `Parabéns <@${user}> \nTodas as **respotas** foram registradas com sucesso! \n\n *Fique tranquilo que eu lhe avisarei no privado sobre o resultado!*`,
-      WHITELITS_APROVE_WITHOUT_USER: 'você esqueceu de selecionar um usuário!',
-      WHITELITS_APROVE_USER_LEFT: 'este usuário saiu do nosso discord.',
-      WHITELITS_APROVE_ALREADY_APPROVED: (user) => `este usuário (<@${user}>) já foi aprovado!`,
-      WHITELITS_APROVE_WITHOUT_WL: (user) => `este usuário (<@${user}>) não tem nenhuma whitelist para ser verificada!`,
-      WHITELITS_APROVE_REPROVED: (user) => `este usuário (<@${user}>) foi reprovado com base na sua última whitelist! \nMesmo assim deseja aprovar ele? Responda com: \`sim\` ou \`não\`.`,
-			
+      WHITELIST_APROVE_WITHOUT_USER: 'você esqueceu de selecionar um usuário!',
+      WHITELIST_APROVE_USER_LEFT: 'este usuário saiu do nosso discord.',
+      WHITELIST_APROVE_ALREADY_APPROVED: (user) => `este usuário (<@${user}>) já foi aprovado!`,
+      WHITELIST_APROVE_WITHOUT_WL: (user) => `este usuário (<@${user}>) não tem nenhuma whitelist para ser verificada!`,
+      WHITELIST_APROVE_REPROVED: (user) => `este usuário (<@${user}>) foi reprovado com base na sua última whitelist! \nMesmo assim deseja aprovar ele? Responda com: \`sim\` ou \`não\`.`,
+      WHITELIST_APROVE_MOTIVE: 'você não colocou o motivo! \nex: `!reprovar @user historia fraca`',
+      WHITELIST_APROVE_ALREADY_REPROVED: (user) => `este usuário (<@${user}>) já foi reprovado, baseado em sua última whitelist!`,
+      
       //Announcement
       ANNOUNCEMENT_ERROR_WT: 'Você precisa digitar um texto que será anunciado!',
       ANNOUNCEMENT_ERROR_1030: 'Por favor digite um texto com até ou menos que 1030 caracteres!',
       ANNOUNCEMENT_MENTION: () => `Você deseja adicionar uma menção na mensagem? Responda com: \`${this.get('UTILS').YES.toLowerCase()}\` ou \`${this.get('UTILS').NO.toLowerCase()}\`!`,
       ANNOUNCEMENT_WHAT_MENTION: 'Digite uma das seguintes respostas: `every` (para uma menção @ everyone) or `here` (para uma menção @ here)!',
-      ANNOUNCEMENT_HEAD: '📢 ANÚNCIO :',
+      ANNOUNCEMENT_HEAD: '📢 ANÚNCIO: ',
     };
   }
 

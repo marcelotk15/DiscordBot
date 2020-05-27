@@ -15,7 +15,7 @@ class Whitelist extends Command {
       guildOnly: true,
       aliases: [ 'wl' ],
       botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
-      memberPermissions: [],
+      memberPermissions: [], // TODO definir
       nsfw: false,
       ownerOnly: false,
       cooldown: 3000,     

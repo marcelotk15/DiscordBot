@@ -112,8 +112,8 @@ class Moitas extends Client {
   }
 
   async findWhitelist({ id: userID }) {
-    return new Promise(async (resolve) => {
-      let whitelistData = await this.whitelistsData.findOne({ 'author.id': userID }).sort({ _id: -1 });
+    return new Promise((resolve) => {
+      let whitelistData = this.whitelistsData.findOne({ 'author.id': userID }).sort({ _id: -1 });
       
       resolve(whitelistData || false);
     });

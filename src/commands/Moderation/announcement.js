@@ -43,7 +43,7 @@ class Announcement extends Command {
     let mention = '';
 
     let msg = await message.channel.send(client.strings.get('ANNOUNCEMENT_MENTION'));
-
+    
     const collector = new MessageCollector(message.channel, (m) => m.author.id === message.author.id, { time: 240000 });
 
     collector.on('collect', async (tmsg) => {

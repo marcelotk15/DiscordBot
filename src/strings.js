@@ -22,6 +22,8 @@ module.exports = class {
 
       //Whitelist
       WHITELIST_TITLE: 'Moitas DayZ RP',
+      WHITELIST_WRONG_CHANNEL: `sala errada para fazer sua whitelist, faça em: <#${c.whitelist.channelId}>`,
+      WHITELIST_WATING_STAFF: 'você já realizou uma whitelist e está está sob analise! Não se preocupe você será notificado no privado assim que ela for analisada pela nossa staff!',
       WHITELIST_WELLCOME: '**Seja bem-vindo ao nosso sistema de Whitelist!**',
       WHITELIST_START: `Para iniciar as perguntas digite: \`${c.whitelist.startCommand}\``,
       WHITELIST_MSG1: `:bangbang: Você possui ${this.ms(c.whitelist.startTime)} para começar. \n\n:bangbang: Cada pergunta terá um tempo para resposta dependendo de sua complexidade. \n\n:bangbang: Somente você e o Bot tem acesso a este canal.`,
@@ -30,13 +32,20 @@ module.exports = class {
       WHITELIST_QUESTION: (question) => `> ***${question}***`,
       WHITELIST_QUESTION_TIME: (time) => `Você possui ${this.ms(time)} para responder.`,
       WHITELIST_TIMES_UP_START: (user) => `${this.get('TIMES_UP')} \n<@${user}>, você demorou para iniciar as whitelist. \n\n *Você pode tentar novamente.*`,
-      WHITELIST_TIMES_UP: (user) => `${this.get('TIMES_UP')} \n<@${user}>, você falhou na whiteslit porque demorou a responder a questão e falhou. \n\n *Você pode tentar novamnete.*`,
+      WHITELIST_TIMES_UP: (user) => `${this.get('TIMES_UP')} \n<@${user}>, você falhou na whiteslit porque demorou a responder! \n\n *Você pode tentar novamnete.*`,
+      WHITELIST_ALREADY_APPROVED: 'você já está aprovado em nossa whitelist',
+      WHITELIST_SUCCESS: (user) => `Parabéns <@${user}> \nTodas as **respotas** foram registradas com sucesso! \n\n *Fique tranquilo que eu lhe avisarei no privado sobre o resultado!*`,
+      WHITELITS_APROVE_WITHOUT_USER: 'você esqueceu de selecionar um usuário!',
+      WHITELITS_APROVE_USER_LEFT: 'este usuário saiu do nosso discord.',
+      WHITELITS_APROVE_ALREADY_APPROVED: (user) => `este usuário (<@${user}>) já foi aprovado!`,
+      WHITELITS_APROVE_WITHOUT_WL: (user) => `este usuário (<@${user}>) não tem nenhuma whitelist para ser verificada!`,
+      WHITELITS_APROVE_REPROVED: (user) => `este usuário (<@${user}>) foi reprovado com base na sua última whitelist! \nMesmo assim deseja aprovar ele? Responda com: \`sim\` ou \`não\`.`,
 			
       //Announcement
       ANNOUNCEMENT_ERROR_WT: 'Você precisa digitar um texto que será anunciado!',
       ANNOUNCEMENT_ERROR_1030: 'Por favor digite um texto com até ou menos que 1030 caracteres!',
       ANNOUNCEMENT_MENTION: () => `Você deseja adicionar uma menção na mensagem? Responda com: \`${this.get('UTILS').YES.toLowerCase()}\` ou \`${this.get('UTILS').NO.toLowerCase()}\`!`,
-      ANNOUNCEMENT_WHAT_MENTION: 'DIgite uma das seguintes respostas: `every` (para uma menção @ everyone) or `here` (para uma menção @ here)!',
+      ANNOUNCEMENT_WHAT_MENTION: 'Digite uma das seguintes respostas: `every` (para uma menção @ everyone) or `here` (para uma menção @ here)!',
       ANNOUNCEMENT_HEAD: '📢 ANÚNCIO :',
     };
   }

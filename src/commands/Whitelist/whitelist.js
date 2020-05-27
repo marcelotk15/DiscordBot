@@ -28,7 +28,7 @@ class Whitelist extends Command {
     const config = this.client.config;
     const strings = this.client.strings;
 
-    if (message.channel.id !== config.whitelist.channelId) return message.channel.send('Wrong place to do this!')
+    if (message.channel.id !== config.whitelist.channelId) return message.reply(strings.get('WHITELIST_WRONG_CHANNEL'))
       .then(m => {
         m.delete({ timeout: 5000 });
 
@@ -36,18 +36,18 @@ class Whitelist extends Command {
       });
 
     if (message.member.roles.cache.has(config.whitelist.approvedRole))
-      return message.channel.send('Você já foi aprovado').then( m => {
+      return message.reply(strings.get('WHITELIST_ALREADY_APPROVED')).then( m => {
         m.delete({ timeout: 10000 });
         message.delete({ timeout: 5000 });
       });
 
     const whiteliist = await this.client.findWhitelist(message.author);// procura a whitelist
-    if (whiteliist) {
+    if (whiteliist)
       if (!whiteliist.moderated)
-        return message.channel.send('');
-
-      console.log('reprovado');
-    }
+        return message.reply(strings.get('WHITELIST_WATING_STAFF')).then( m => {
+          m.delete({ timeout: 10000 });
+          message.delete({ timeout: 5000 });
+        });
 
     const questions = require('./questions.json');
 
@@ -154,9 +154,11 @@ class Whitelist extends Command {
             
       
       if (!error) { // Se não teve erros acessa faz esses comandos para finalizar
-        
-        channelMessage.delete(); // 
-        channel.send('```css\nWhitelist finalizada... a sala será apagada```');
+        messageEmbed.fields = [];
+
+        messageEmbed.setDescription(strings.get('WHITELIST_SUCCESS', message.author.id));
+
+        channelMessage.edit(messageEmbed); // 
 
         saveWhitelsit(message.author, questions, answers, this.client); // salva a whitelist na db
 
@@ -164,7 +166,7 @@ class Whitelist extends Command {
 
         message.guild.channels.cache.get(config.whitelist.channelAdm).send(whitelistEmbed);
 
-        setTimeout(() => { return channel.delete(); }, 15000);
+        setTimeout(() => { channel.delete(); }, 15000);
       }
     });
   }

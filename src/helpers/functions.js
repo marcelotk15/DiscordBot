@@ -7,7 +7,7 @@ module.exports = {
     if(message.channel.type !== 'dm'){
       const prefixes = [
         `<@${message.client.user.id}>`,
-        data.config.botname,
+        data.config.botName,
         data.guild.prefix
       ];
       let prefix = null;

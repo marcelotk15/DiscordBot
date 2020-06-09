@@ -6,7 +6,8 @@ let cmdCooldown = {};
 class Message extends Event {
   constructor(client) {
     super(client, {
-      name: 'message',
+      on: 'message',
+      name: 'Mensagens'
     });
 
     this.client = client;

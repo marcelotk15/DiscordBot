@@ -6,7 +6,8 @@ const logger = require('../logger');
 class Ready extends Event {
   constructor(client) {
     super(client, {
-      name: 'ready',
+      on: 'ready',
+      name: 'ServerReady'
     });
 
     this.client = client;

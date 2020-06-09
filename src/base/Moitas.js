@@ -87,9 +87,9 @@ class Moitas extends Client {
   loadEvent(event) {
     this.logger.log('silly', `Loading Event: ${event.conf.name}.`);
 
-    this.events.set(event.conf.name, event);
+    this.events.set(event.conf.on, event);
 
-    this.on(event.conf.name, (...args) => event.run(...args));
+    this.on(event.conf.on, (...args) => event.run(...args));
   }
 
   async resolveMember(search, guild){

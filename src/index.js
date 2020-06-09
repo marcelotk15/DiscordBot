@@ -8,7 +8,7 @@ const chalk = require('chalk');
 
 console.log(
   chalk.yellow(
-    figlet.textSync('MoitasBot 0.1', {  horizontalLayout: 'fitted', verticalLayout: 'default' })
+    figlet.textSync(`${require('./config').botName} - ${require('../package.json').version}`, {  horizontalLayout: 'fitted', verticalLayout: 'default' })
   )
 );
 

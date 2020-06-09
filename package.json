@@ -1,6 +1,6 @@
 {
   "name": "discord_bot",
-  "version": "1.0.0",
+  "version": "0.5",
   "description": "",
   "main": "src/index.js",
   "author": "Marcelo 'teka' Augusto",
@@ -15,6 +15,7 @@
     "discord.js": "^12.2.0",
     "figlet": "^1.4.0",
     "fluent-ffmpeg": "^2.1.2",
+    "gamedig": "^2.0.20",
     "mongoose": "^5.9.15",
     "opusscript": "^0.0.7",
     "winston": "^3.2.1",

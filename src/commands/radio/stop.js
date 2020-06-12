@@ -5,16 +5,16 @@ const { Command } = require('../../base');
 class Stop extends Command {
   constructor(client) {
     super(client, {
-      name: 'stoping',
+      name: 'stop',
       // description: 'No description provided',
       // usage = 'No usage provided',
       // examples = 'No example provided',
       dirname: __dirname,
-      enabled: false,
+      enabled: true,
       guildOnly: false,
       aliases: [],
-      botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
       memberPermissions: [],
+      botPermissions: [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
       nsfw: false,
       ownerOnly: false,
       cooldown: 3000,
@@ -24,13 +24,16 @@ class Stop extends Command {
   }
 
   async run(message) {
-    const serverQueue = this.client.queue.get(message.guild.id);
+    const serverRadio = this.client.radio.get(message.guild.id);
 
-    if (!message.member.voice.channel) return message.channel.send('You have to be in a voice channel to stop the music!');
+    if (!serverRadio) return message.channel.send('O servidor não está sintonizado em nenhuma frequência no momento...');
 
-    serverQueue.songs = [];
+    serverRadio.connection.dispatcher.end();
+    serverRadio.voiceChannel.leave();
 
-    serverQueue.connection.dispatcher.end();
+    message.channel.send('Radio desligada!');
+
+    this.client.radio.delete(message.guild.id);
   }
 }
 

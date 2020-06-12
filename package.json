@@ -17,6 +17,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "gamedig": "^2.0.20",
     "mongoose": "^5.9.15",
+    "node-tunein-radio": "^0.3.4",
     "opusscript": "^0.0.7",
     "winston": "^3.2.1",
     "winston-console-format": "^1.0.5",

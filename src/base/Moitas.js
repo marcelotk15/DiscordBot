@@ -18,6 +18,7 @@ class Moitas extends Client {
     this.logger = require('../logger');
     this.strings = new (require('../strings'))();
     this.queue = new Map();
+    this.radio = new Map();
   }
 
   load(dirCommands, dirEvents) {
